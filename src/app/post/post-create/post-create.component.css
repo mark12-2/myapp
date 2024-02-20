@@ -1,0 +1,11 @@
+textarea, mat-form-field {
+    width: 100%;
+    margin: auto;
+    /* border-radius: 20px; */
+}
+button{
+    margin: auto;
+}
+mat-card{
+    margin: auto;
+}
