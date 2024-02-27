@@ -15,6 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -23,7 +24,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     AppComponent,
     PostCreateComponent,
     PostListComponent, 
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,7 +34,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatInputModule, MatButtonModule,
     MatCardModule, MatToolbarModule,
     MatMenuModule, MatIconModule,
-    MatExpansionModule
+    MatExpansionModule,
+    HttpClientModule
     
   ],
   providers: [],
