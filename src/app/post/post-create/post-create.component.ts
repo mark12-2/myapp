@@ -13,17 +13,18 @@ export class PostCreateComponent{
     enteredContent = '';
     @Output() postCreated = new EventEmitter<Post>();
 
-    constructor(private postService: PostService) {} // Inject the PostService
+    constructor(private postService: PostService) {} 
 
     onAddPost(form: NgForm){
         if (form.invalid){
             return;
         }
         const post: Post = {
+            id: form.value.id,
             title: form.value.title,
             content: form.value.content,
         };
-        this.postService.addPost(post.title, post.content)
+        this.postService.addPost(post.id, post.title, post.content)
         form.resetForm();
     }
 }
