@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Post } from "./post.model";
-import { Observable, Subject } from "rxjs";
+import { Observable, Subject, catchError, tap, throwError } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({
@@ -14,11 +14,12 @@ export class PostService{
     private lastId = 0;
 
   constructor(private http: HttpClient) { }
-
+  // fetch post
   getPosts() {
     this.http.get<{ message: string; posts: Post[] }>(this.apiUrl).subscribe(data => {
       this.posts = data.posts;
       this.postUpdated.next([...this.posts]);
+      
     });
     return [...this.posts];
   }
@@ -27,15 +28,11 @@ export class PostService{
         return this.postUpdated.asObservable();
     }
 
-    // addPost(title: string, content: string){
-    //     const post: Post = { title: title, content: content };
-    //     this.posts.push(post);
-    //     this.postUpdated.next([...this.posts]);
-    // }
 
-    addPost(id: string, title: string, content: string) {
-      // const id = (this.lastId++).toString(); 
-      const post: Post = { id: id, title: title, content: content };
+    //add post function
+    addPost(_id: string, title: string, content: string) {
+      const id = (this.lastId++).toString(); 
+      const post: Post = { _id: id, title: title, content: content };
       this.http.post<{ message: string }>(this.apiUrl, post)
           .subscribe(response => {
               console.log(response.message);
@@ -45,4 +42,10 @@ export class PostService{
               console.error('Error adding post:', error);
           });
   }
+
+  // delete post function
+  deletePost(postId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${postId}`);
+   }
+  
 }
