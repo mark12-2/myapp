@@ -1,9 +1,27 @@
 <mat-accordion multi="true" *ngIf="posts.length > 0">
     <mat-expansion-panel *ngFor="let post of posts">
     <mat-expansion-panel-header> {{ post.title }}</mat-expansion-panel-header>
-    <p>{{ post.content }}</p>
+    <div>
+        <!-- Display the image if it exists -->
+        <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Post Image" class="post-image">
+        <p *ngIf="editingPostId !== post._id">{{ post.content }}</p>
+        <form *ngIf="editingPostId === post._id">
+           <mat-form-field>
+              <mat-label>Title</mat-label>
+              <input matInput [(ngModel)]="post.title" name="title">
+           </mat-form-field>
+           <mat-form-field>
+              <mat-label>Content</mat-label>
+              <textarea matInput [(ngModel)]="post.content" name="content"></textarea>
+           </mat-form-field>
+        </form>
+        <span *ngIf="editingPostId === post._id">
+            <button mat-button color="warn" (click)="onCancelEdit()">Cancel</button>
+           <button mat-button color="primary" (click)="onSavePost(post._id, post)">Save</button>
+         </span>
+      </div>
     <mat-action-row>
-        <button mat-button color="primary">EDIT</button>
+        <button mat-button color="primary" *ngIf="editingPostId !== post._id" (click)="onEditPost(post._id)">EDIT</button>
         <button mat-button-warn color="red" (click)="onDeletePost(post._id)">DELETE</button>
     </mat-action-row>
     </mat-expansion-panel>

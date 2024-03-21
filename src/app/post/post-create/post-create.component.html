@@ -18,7 +18,21 @@
             #content="ngModel"></textarea>
     <mat-error *ngIf="content.invalid">Content is empty</mat-error>
 </mat-form-field>
-
+<!-- Image URL input -->
+<mat-form-field>
+    <input
+    class="input"
+    matInput
+    type="text"
+    name="imageUrl"
+    ngModel
+    placeholder="Image URL"
+    #imageUrl="ngModel"
+    />
+    <mat-error *ngIf="imageUrl.invalid">
+    Please enter a valid image URL.
+    </mat-error>
+</mat-form-field><br>
 <button mat-raised-button color="primary" type="submit">Save</button>
 
 </form>

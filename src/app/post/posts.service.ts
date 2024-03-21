@@ -19,7 +19,7 @@ export class PostService{
     this.http.get<{ message: string; posts: Post[] }>(this.apiUrl).subscribe(data => {
       this.posts = data.posts;
       this.postUpdated.next([...this.posts]);
-      
+      return this.http.get<Post[]>(this.apiUrl);
     });
     return [...this.posts];
   }
@@ -30,22 +30,30 @@ export class PostService{
 
 
     //add post function
-    addPost(_id: string, title: string, content: string) {
+    addPost(title: string, content: string, imageUrl: string){
       const id = (this.lastId++).toString(); 
-      const post: Post = { _id: id, title: title, content: content };
+      const post: Post = { _id: id, title: title, content: content, imageUrl: imageUrl };
       this.http.post<{ message: string }>(this.apiUrl, post)
-          .subscribe(response => {
-              console.log(response.message);
-              this.posts.push(post);
-              this.postUpdated.next([...this.posts]);
-          }, error => {
-              console.error('Error adding post:', error);
-          });
-  }
+      .subscribe(response => {
+          console.log(response.message);
+          this.posts.push(post);
+          this.postUpdated.next([...this.posts]);
+      }, error => {
+          console.error('Error adding post:', error);
+      });
+}
 
   // delete post function
   deletePost(postId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${postId}`);
    }
   
+   editPost(postId: string, updatedPost: Post): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${postId}`, updatedPost).pipe(
+        tap(() => {
+
+        })
+    );
+}
+   
 }

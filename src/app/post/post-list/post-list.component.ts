@@ -11,7 +11,9 @@ import { PostService } from "../posts.service";
 
 export class PostListComponent implements OnInit, OnDestroy{ 
     posts: Post[] = [];
+    editingPostId: string | null = null; // Track the post being edited
     private postsSub!: Subscription;
+    private postUpdateSub!: Subscription;
 
     constructor(public postService: PostService, ){}
     ngOnInit(): void {
@@ -20,6 +22,9 @@ export class PostListComponent implements OnInit, OnDestroy{
         .getPostUpdateListener()
         .subscribe((posts: Post[]) => {
             this.posts = posts;
+        });
+        this.postUpdateSub = this.postService.getPostUpdateListener().subscribe(posts => {
+          this.posts = posts;
         });
     }
 
@@ -38,5 +43,27 @@ export class PostListComponent implements OnInit, OnDestroy{
            }
         });
        }
+
+    onEditPost(postId: string) {
+        this.editingPostId = postId; // Set the post ID being edited
+      }
+    
+     onSavePost(postId: string, updatedPost: Post) {
+        console.log('Saving post:', updatedPost); // Debugging line
+        this.postService.editPost(postId, updatedPost).subscribe(() => {
+          console.log('Post saved successfully'); // Debugging line
+          // Update the local posts array with the updated post
+          const index = this.posts.findIndex(post => post._id === postId);
+          if (index !== -1) {
+            this.posts[index] = updatedPost;
+          }
+          this.editingPostId = null; // Exit edit mode
+        });
+     }
+    
+     onCancelEdit() {
+        this.editingPostId = null;
+     }
+    
 }
 

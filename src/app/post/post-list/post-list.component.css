@@ -2,6 +2,27 @@
     display: block;
     margin-top: 1rem;
 }
-.info-text{
+.info-text {
     text-align: center;
+}
+
+
+/* post-list.component.css */
+.mat-form-field {
+    width: 100%;
+   }
+   
+   .mat-action-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 16px 16px;
+   }
+   
+   .mat-action-row button {
+    margin-left: 8px;
+   }
+
+   .post-image {
+    width: 200px;
+    height: 200px;
 }
