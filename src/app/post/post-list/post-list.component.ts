@@ -11,7 +11,7 @@ import { PostService } from "../posts.service";
 
 export class PostListComponent implements OnInit, OnDestroy{ 
     posts: Post[] = [];
-    editingPostId: string | null = null; // Track the post being edited
+    editingPostId: string | null = null; 
     private postsSub!: Subscription;
     private postUpdateSub!: Subscription;
 
@@ -45,19 +45,18 @@ export class PostListComponent implements OnInit, OnDestroy{
        }
 
     onEditPost(postId: string) {
-        this.editingPostId = postId; // Set the post ID being edited
+        this.editingPostId = postId; 
       }
     
      onSavePost(postId: string, updatedPost: Post) {
-        console.log('Saving post:', updatedPost); // Debugging line
+        console.log('Saving post:', updatedPost); 
         this.postService.editPost(postId, updatedPost).subscribe(() => {
-          console.log('Post saved successfully'); // Debugging line
-          // Update the local posts array with the updated post
+          console.log('Post saved successfully'); 
           const index = this.posts.findIndex(post => post._id === postId);
           if (index !== -1) {
             this.posts[index] = updatedPost;
           }
-          this.editingPostId = null; // Exit edit mode
+          this.editingPostId = null; 
         });
      }
     

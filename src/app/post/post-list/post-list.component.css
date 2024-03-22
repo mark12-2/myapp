@@ -8,10 +8,10 @@
 
 
 /* post-list.component.css */
-.mat-form-field {
+textarea, mat-form-field {
     width: 100%;
-   }
-   
+    margin: auto;
+}
    .mat-action-row {
     display: flex;
     justify-content: flex-end;
@@ -26,3 +26,4 @@
     width: 200px;
     height: 200px;
 }
+

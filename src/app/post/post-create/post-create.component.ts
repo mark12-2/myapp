@@ -25,7 +25,6 @@ export class PostCreateComponent{
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e: any) => {
-                    // Assuming you want to set the uploadedImageUrl to the Data URL
                     this.uploadedImageUrl = e.target.result;
                 };
                 reader.readAsDataURL(file);
@@ -36,12 +35,9 @@ export class PostCreateComponent{
         if (form.invalid) {
             return;
         }
-        // Extract title, content, and imageUrl from the form
         const title = form.value.title;
         const content = form.value.content;
-        let imageUrl = form.value.imageUrl; // Extract the image URL from the input
-
-        // If an image was uploaded, use the uploaded image URL instead
+        let imageUrl = form.value.imageUrl; 
         if (this.uploadedImageUrl) {
             imageUrl = this.uploadedImageUrl;
         }
