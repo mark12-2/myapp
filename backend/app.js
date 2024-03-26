@@ -79,6 +79,18 @@ app.delete('/api/posts/:id', async (req, res) => {
        });
    });
 
+   app.put('/api/posts/:id', async (req, res) => {
+    try {
+        const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.use('/api/posts', (req, res, next)=> {
     Post.find().then(documents => {
      res.status(200).json({

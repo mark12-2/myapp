@@ -45,8 +45,13 @@ export class PostService{
 
   // delete post function
   deletePost(postId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${postId}`);
-   }
+    return this.http.delete(`${this.apiUrl}/${postId}`).pipe(
+        tap(() => {
+            this.posts = this.posts.filter(post => post._id !== postId);
+            this.postUpdated.next([...this.posts]);
+        })
+    );
+}
   
    editPost(postId: string, updatedPost: Post): Observable<any> {
     return this.http.put(`${this.apiUrl}/${postId}`, updatedPost).pipe(
