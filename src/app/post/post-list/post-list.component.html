@@ -1,9 +1,9 @@
 <mat-accordion multi="true" *ngIf="posts.length > 0">
     <mat-expansion-panel *ngFor="let post of posts">
     <mat-expansion-panel-header> {{ post.title }}</mat-expansion-panel-header>
-    <div>
-        <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Post Image" class="post-image">
+    <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="Post Image" class="post-image" style="width: 200px; height: 130px;">
         <p *ngIf="editingPostId !== post._id">{{ post.content }}</p>
+        <div>
         <form *ngIf="editingPostId === post._id">
            <mat-form-field>
               <mat-label>Title</mat-label>
@@ -12,6 +12,10 @@
            <mat-form-field>
               <mat-label>Content</mat-label>
               <textarea matInput [(ngModel)]="post.content" name="content"></textarea>
+           </mat-form-field>
+           <mat-form-field>
+              <mat-label>Image</mat-label>
+              <input matInput [(ngModel)]="post.imageUrl" name="imageUrl">
            </mat-form-field>
         </form>
         <span *ngIf="editingPostId === post._id">

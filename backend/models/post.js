@@ -9,7 +9,6 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // image url is optional
     imageUrl: {
         type: String,
         required: false 

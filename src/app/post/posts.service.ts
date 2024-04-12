@@ -38,6 +38,9 @@ export class PostService{
           console.log(response.message);
           this.posts.push(post);
           this.postUpdated.next([...this.posts]);
+
+          this.getPosts();
+          
       }, error => {
           console.error('Error adding post:', error);
       });
@@ -46,11 +49,11 @@ export class PostService{
   // delete post function
   deletePost(postId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${postId}`).pipe(
-        tap(() => {
-            this.posts = this.posts.filter(post => post._id !== postId);
-            this.postUpdated.next([...this.posts]);
-        })
-    );
+      tap(() => {
+          this.posts = this.posts.filter(post => post._id !== postId);
+          this.postUpdated.next([...this.posts]);
+      })
+  );
 }
   
    editPost(postId: string, updatedPost: Post): Observable<any> {
@@ -60,5 +63,6 @@ export class PostService{
         })
     );
 }
+
    
 }

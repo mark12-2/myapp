@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const Post = require('./models/post.js');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const path = require('path');
 
 app.use(bodyParser.json());
 
@@ -27,59 +29,63 @@ app.use((req, res, next)=>{
     next();
 })
 
-app.post("/api/posts", (req, res, next)=> {
+// Configure Multer storage
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+       cb(null, 'uploads/');
+    },
+    filename: function(req, file, cb) {
+       cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+   });
+   
+   const upload = multer({ storage: storage });
+   
+   app.post('/api/posts/upload', upload.single('imageFile'), (req, res) => {
+    res.json({ message: 'File uploaded successfully', filePath: req.file.path });
+   });
+
+   
+app.post("/api/posts", (req, res, next) => {
     const post = new Post({
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        imageUrl: req.body.imageUrl 
     });
+
     post.save()
-    .then(savedPost => {
-        console.log(savedPost);
-        res.status(201).json({
-            message: 'post added successfully'
+        .then(savedPost => {
+            console.log(savedPost);
+            res.status(201).json(savedPost);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({
+                message: 'Error saving post'
+            });
         });
-    })
-    .catch(err => {
-        console.error(err);
-        res.status(500).json({
-            message: 'Error saving post'
-        });
-    });
 });
 
 app.delete('/api/posts/:id', async (req, res) => {
-    try {
-       const post = await Post.findByIdAndDelete(req.params.id);
-       if (!post) {
-         return res.status(404).json({ message: 'Post not found' });
-       }
-       res.json({ message: 'Post deleted successfully' });
-    } catch (error) {
-       res.status(500).json({ message: 'Server error' });
+    const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid post ID' });
     }
-   });
 
-   app.post("/api/posts", (req, res, next) => {
-    const post = new Post({
-       title: req.body.title,
-       content: req.body.content,
-       imageUrl: req.body.imageUrl,
-    });
-   
-    post.save()
-       .then(savedPost => {
-         console.log(savedPost);
-         res.status(201).json(savedPost); 
-       })
-       .catch(err => {
-         console.error(err);
-         res.status(500).json({
-           message: 'Error saving post'
-         });
-       });
-   });
+    try {
+        const post = await Post.findByIdAndDelete(id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        res.json({ message: 'Post deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
-   app.put('/api/posts/:id', async (req, res) => {
+app.put('/api/posts/:id', async (req, res) => {
     try {
         const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!post) {

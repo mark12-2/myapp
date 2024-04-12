@@ -12,7 +12,7 @@ export class PostCreateComponent{
     enteredTitle = '';
     enteredContent = '';
     enteredImageUrl = ''; 
-    uploadedImageUrl = '';
+    uploadedImageUrl: string = '';
 
     @Output() postCreated = new EventEmitter<Post>();
 
@@ -31,13 +31,14 @@ export class PostCreateComponent{
             }
         }
     }
+    
     onAddPost(form: NgForm) {
         if (form.invalid) {
             return;
         }
         const title = form.value.title;
         const content = form.value.content;
-        let imageUrl = form.value.imageUrl; 
+        let imageUrl = form.value.imageUrl;
         if (this.uploadedImageUrl) {
             imageUrl = this.uploadedImageUrl;
         }
