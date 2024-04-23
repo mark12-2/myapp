@@ -13,10 +13,15 @@ export class PostCreateComponent{
     enteredContent = '';
     enteredImageUrl = ''; 
     uploadedImageUrl: string = '';
+    isPanelExpanded = false;
 
     @Output() postCreated = new EventEmitter<Post>();
 
     constructor(private postService: PostService) {} 
+
+    togglePanel(panel: any) {
+        panel.expanded = !panel.expanded;
+     }
     
     onFileSelected(event: Event) {
         const input = event.target as HTMLInputElement;

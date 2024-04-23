@@ -1,7 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Post } from "../post.model";
 import { Subscription } from "rxjs";
 import { PostService } from "../posts.service";
+import { MatPaginator } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-post-list',
@@ -10,10 +12,14 @@ import { PostService } from "../posts.service";
 })
 
 export class PostListComponent implements OnInit, OnDestroy{ 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;  
     posts: Post[] = [];
     editingPostId: string | null = null; 
     private postsSub!: Subscription;
     private postUpdateSub!: Subscription;
+    pageSize = 4;
+    pageIndex = 0;
+
 
     constructor(public postService: PostService, ){}
     ngOnInit(): void {
@@ -63,6 +69,12 @@ export class PostListComponent implements OnInit, OnDestroy{
      onCancelEdit() {
         this.editingPostId = null;
      }
+
+     // paginator
+     handlePageChange(event: PageEvent) {
+      this.pageSize = event.pageSize;
+      this.pageIndex = event.pageIndex;
+   }
     
 }
 

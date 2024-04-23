@@ -15,6 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { HttpClientModule } from '@angular/common/http';
 
 
@@ -35,7 +36,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatCardModule, MatToolbarModule,
     MatMenuModule, MatIconModule,
     MatExpansionModule,
-    HttpClientModule
+    HttpClientModule,
+    MatPaginatorModule,
     
   ],
   providers: [],
