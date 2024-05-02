@@ -1,5 +1,4 @@
-<mat-expansion-panel #panel hideToggle [(expanded)]="isPanelExpanded">
-    <mat-expansion-panel-header> <h2>Create Post</h2></mat-expansion-panel-header>
+    <h2>Create Post</h2>
     <br>
     <form (submit)="onAddPost(postForm)" #postForm="ngForm">
 <mat-form-field>
@@ -41,8 +40,6 @@
 <img *ngIf="imageUrl.value" [src]="imageUrl.value" alt="Image Preview" class="image-preview" style="width: 200px; height: 130px;">
 <!-- copy image address -->
 <br>
-<button mat-raised-button color="primary" type="submit" (click)="togglePanel(panel)">Save</button> &nbsp;&nbsp;&nbsp;
-<button mat-raised-button color="warn" (click)="togglePanel(panel)">Cancel</button> 
+<button mat-raised-button color="primary" type="submit" >Save</button> &nbsp;&nbsp;&nbsp;
+<button mat-raised-button color="warn" routerLink="/post-list" >Cancel</button> 
 </form>
-
-</mat-expansion-panel>
