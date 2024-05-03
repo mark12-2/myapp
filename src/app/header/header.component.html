@@ -16,8 +16,12 @@
         <span>My App</span> &nbsp;&nbsp;&nbsp;&nbsp;
         <span class="example-spacer"></span>
         <button mat-icon-button class="example-icon" routerLink="/post-create/:id">
-          <mat-icon>add_box</mat-icon>Create
-        </button>
+          <mat-icon>add_box</mat-icon>Create</button>
+         <ul class="nav navbar-nav" style="float:right">
+        <li *ngIf="!userAuthenticated"><a routerLink="login">Login</a></li>
+        <li *ngIf="!userAuthenticated"><a routerLink="signup">Sign-Up</a></li>
+        <li *ngIf="userAuthenticated"><button type="submit" style="margin-top:10px" (click)="logout()">Logout</button></li>
+      </ul>
       </mat-toolbar-row>
   
       
