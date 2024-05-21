@@ -14,24 +14,23 @@ import { PageEvent } from '@angular/material/paginator';
 export class PostListComponent implements OnInit, OnDestroy{ 
   @ViewChild(MatPaginator) paginator!: MatPaginator;  
     posts: Post[] = [];
+    filteredPosts: Post[] = []; 
     editingPostId: string | null = null; 
     private postsSub!: Subscription;
     private postUpdateSub!: Subscription;
     pageSize = 4;
     pageIndex = 0;
+    searchTerm = '';
+    isSearching = false;
 
 
     constructor(public postService: PostService, ){}
     ngOnInit(): void {
-        this.postService.getPosts();
-        this.postsSub = this.postService
-        .getPostUpdateListener()
-        .subscribe((posts: Post[]) => {
-            this.posts = posts;
-        });
-        this.postService.getPostUpdateListener().subscribe(posts => {
-          this.posts = posts;
-        });
+      this.postService.getPosts();
+      this.postsSub = this.postService.getPostUpdateListener().subscribe((posts: Post[]) => {
+        this.posts = posts;
+        this.filteredPosts = [...posts]; 
+      });
     }
 
     ngOnDestroy(): void {
@@ -76,5 +75,23 @@ export class PostListComponent implements OnInit, OnDestroy{
       this.pageIndex = event.pageIndex;
    }
     
+   // search function
+   onSearch() {
+    this.isSearching = true; 
+    this.filteredPosts = this.filterPosts(this.searchTerm);
+  }
+
+  private filterPosts(searchTerm: string): Post[] {
+    return this.posts.filter(post => 
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  clearSearch() {
+    this.searchTerm = ''; 
+    this.isSearching = false; 
+    this.onSearch(); 
+  }
 }
 
