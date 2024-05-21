@@ -12,7 +12,10 @@ const jwt = require('jsonwebtoken');
 
 app.use(bodyParser.json());
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:4200' 
+}));
+
 
 mongoose.connect("mongodb+srv://mark:R8YcAnqh!Ku.BZe@cluster0.fypebjl.mongodb.net/node-angular?retryWrites=true&w=majority&appName=Cluster0")
 .then(() => {
@@ -32,36 +35,31 @@ app.use((req, res, next)=>{
     next();
 })
 
-// Configure Multer storage
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-       cb(null, 'uploads/');
-    },
-    filename: function(req, file, cb) {
-       cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+    const authHeader = req.header('Authorization');
+    if (!authHeader) {
+       return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
-   });
-   
-   const upload = multer({ storage: storage });
-   
-   app.post('/api/posts/upload', upload.single('imageFile'), (req, res) => {
-    res.json({ message: 'File uploaded successfully', filePath: req.file.path });
-   });
+
+    const token = authHeader.split(' ')[1]; // Extract the token from "Bearer token"
+    if (!token) {
+       return res.status(401).json({ message: 'Invalid token format.' });
+    }
+
+    try {
+       const decoded = jwt.verify(token, jwtSecretKey);
+       req.user = decoded;
+       next();
+    } catch (error) {
+        console.error('Token verification error:', error);
+        res.status(400).json({ message: 'Invalid token.' });
+    }
+
+};
 
    
 app.post("/api/posts", (req, res, next) => {
-
-    try{
-        const token = req.headers.authorization;
-        jwt.verify(token, "secret_string")
-        next();
-    }
-    catch(err){
-        res.status(401).json({
-            message:"Error with Authentication token"
-        })
-    }
-
     const post = new Post({
         title: req.body.title,
         content: req.body.content,
@@ -69,11 +67,11 @@ app.post("/api/posts", (req, res, next) => {
     });
 
     post.save()
-        .then(savedPost => {
+       .then(savedPost => {
             console.log(savedPost);
-            res.status(201).json(savedPost);
+            res.status(201).json(savedPost); 
         })
-        .catch(err => {
+       .catch(err => {
             console.error(err);
             res.status(500).json({
                 message: 'Error saving post'
@@ -123,6 +121,7 @@ app.use('/api/posts', (req, res, next)=> {
 
 
  // authentication... login and signup
+
  app.post('/sign-up', (req,res) => {
 
     bcrypt.hash(req.body.password, 10)
@@ -148,39 +147,34 @@ app.use('/api/posts', (req, res, next)=> {
 })
 
 
- app.post('/login', (req,res) => {
-
+app.post('/login', async (req, res) => { 
     let userFound;
 
-    UserModel.findOne({username: req.body.username})
-        .then(user => {
-            if(!user){
+    UserModel.findOne({ username: req.body.username })
+      .then(async user => { 
+            if (!user) {
                 return res.status(401).json({
                     message: 'User not found'
-                })
+                });
             }
-            userFound = user
-            return bcrypt.compare(req.body.password, user.password)
+            userFound = user;
+            const match = await bcrypt.compare(req.body.password, user.password); 
+            if (!match) {
+                return res.status(401).json({
+                    message: 'Password is incorrect'
+                });
+            }
+
+            const token = jwt.sign({ username: userFound.username, userId: userFound._id }, "secret_string");
+            res.json({ token });
         })
-    .then(result => {
-        if(!result){
+      .catch(err => {
             return res.status(401).json({
-                message: 'Password is incorrect'
-            })
-        }
+                message: 'Error with authentication'
+            });
+        });
+});
 
-        const token = jwt.sign({username: userFound.username, userId: userFound._id}, "secret_string", {expiresIn:"1h"})
-        return res.status(200).json({
-            token: token,
-            expiresIn: 3600
-        })
-    })
-    .catch(err => {
-        return res.status(401).json({
-            message: 'Error with authentication'
-        })
-    })
-})
 
- 
+
 module.exports = app;

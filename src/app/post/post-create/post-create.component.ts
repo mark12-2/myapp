@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from "@angular/core";
 import { Post } from "../post.model";  
 import { NgForm } from "@angular/forms";
 import { PostService } from "../posts.service"; 
+import { Router } from "@angular/router";
 
 @Component({
     selector:'app-post-create',
@@ -17,7 +18,7 @@ export class PostCreateComponent{
 
     @Output() postCreated = new EventEmitter<Post>();
 
-    constructor(private postService: PostService) {} 
+    constructor(private postService: PostService, private router: Router) {} 
 
     togglePanel(panel: any) {
         panel.expanded = !panel.expanded;
@@ -47,11 +48,18 @@ export class PostCreateComponent{
         if (this.uploadedImageUrl) {
             imageUrl = this.uploadedImageUrl;
         }
-        this.postService.addPost(title, content, imageUrl)
-            form.resetForm();
-    
-            this.uploadedImageUrl = '';
-        };
+        this.postService.addPost(title, content, imageUrl).subscribe(
+            response => {
+                console.log('Post added successfully:', response);
+                form.resetForm();
+                this.uploadedImageUrl = '';
+                this.router.navigate(['/post-list']);
+            },
+            error => {
+                console.error('Error adding post:', error);
+            }
+        ); 
+    }
     }
 
     

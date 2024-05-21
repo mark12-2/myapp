@@ -12,20 +12,25 @@ export class HeaderComponent {
 
     private authenticationSub!: Subscription;
     userAuthenticated = false;
+    loggedInUserName?: string;
 
-    constructor(private authService: AuthService) { }
+    constructor(private authService: AuthService) {  }
+    
+    ngOnInit(): void {
+      this.userAuthenticated = this.authService.getIsAuthenticated();
+      this.authenticationSub = this.authService.getAuthenticatedSub().subscribe(status => {
+        this.userAuthenticated = status;
+        if (status) {
+          this.loggedInUserName = this.authService.getLoggedInUserName();
+        } else {
+          this.loggedInUserName = undefined; 
+        }
+      });
+    }
 
-    ngOnDestroy(): void {
+      ngOnDestroy(): void {
         this.authenticationSub.unsubscribe();
       }
-    
-      ngOnInit(): void {
-        this.userAuthenticated = this.authService.getIsAuthenticated();
-        this.authenticationSub = this.authService.getAuthenticatedSub().subscribe(status => {
-          this.userAuthenticated = status;
-        })
-      }
-    
     
         logout() {
             this.authService.logout();

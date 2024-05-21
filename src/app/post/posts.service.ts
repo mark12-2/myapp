@@ -30,21 +30,11 @@ export class PostService{
 
 
     //add post function
-    addPost(title: string, content: string, imageUrl: string){
+    addPost(title: string, content: string, imageUrl: string): Observable<{ message: string }> {
       const id = (this.lastId++).toString(); 
       const post: Post = { _id: id, title: title, content: content, imageUrl: imageUrl };
-      this.http.post<{ message: string }>(this.apiUrl, post)
-      .subscribe(response => {
-          console.log(response.message);
-          this.posts.push(post);
-          this.postUpdated.next([...this.posts]);
-
-          this.getPosts();
-          
-      }, error => {
-          console.error('Error adding post:', error);
-      });
-}
+      return this.http.post<{ message: string }>(this.apiUrl, post);
+    }
 
   // delete post function
   deletePost(postId: string): Observable<any> {

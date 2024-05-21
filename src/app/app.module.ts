@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +22,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { AuthInterceptor } from './auth/auth-inceptor';
 import { RouteGuard } from './auth/route-guard';
+import { AuthService } from './auth/auth-service';
 
 
 
@@ -47,7 +48,14 @@ import { RouteGuard } from './auth/route-guard';
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass:AuthInterceptor, multi:true},
-    RouteGuard
+    RouteGuard,
+    AuthService,
+    {
+        provide: APP_INITIALIZER,
+        useFactory: (authService: AuthService) => () => authService.initializeAuthState(),
+        deps: [AuthService],
+        multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
